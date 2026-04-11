@@ -1,7 +1,9 @@
 from django.shortcuts import redirect, render
+from rest_framework import generics
 
 from .forms import EstimateUploadForm
 from .models import Estimate
+from .serializers import EstimateSerializer
 from .services import process_new_estimate
 from .tasks import process_estimate_task
 
@@ -30,3 +32,13 @@ def index(request):
 
     return render(request, 'estimates/upload.html', context)
 
+
+class EstimateListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Estimate.objects.all().order_by('-created_at')
+    serializer_class = EstimateSerializer
+
+    def perform_create(self, serializer):
+        # Эта магия срабатывает при POST-запросе
+        estimate = serializer.save()
+        # Запускаем нашу фоновую задачу Celery!
+        process_estimate_task.delay(estimate.id)
