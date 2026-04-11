@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Загрузка сметы ГГЭ</title>
+</head>
+<body>
+    <h1>Загрузить новую смету</h1>
+    
+    <!-- enctype важен для загрузки файлов! -->
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}  <!-- Защита Django от взлома (обязательно) -->
+        {{ form.as_p }}   <!-- Django сам нарисует поля формы в тегах <p> -->
+        <button type="submit">Отправить на проверку</button>
+    </form>
+
+    <hr>
+    <a href="/admin/">Перейти в админку</a>
+
+    <hr>
+    <h2>Список загруженных смет</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Дата</th>
+                <th>Статус</th>
+                <th>Файл</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for est in estimates %}
+            <tr>
+                <td>{{ est.title }}</td>
+                <td>{{ est.created_at|date:"d.m.Y H:i" }}</td>
+                <td>{{ est.get_status_display }}</td> <!-- Магия: выводит "Новая" вместо "new" -->
+                <td><a href="{{ est.file.url }}">Скачать</a></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">Смет пока нет.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
+
