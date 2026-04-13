@@ -57,7 +57,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],  # Чтобы Django видел папку registration
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -136,3 +136,19 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Настройки Celery
 CELERY_BROKER_URL = 'amqp://guest:guest@rabbitmq:5672//' # Адрес RabbitMQ в Docker
 CELERY_RESULT_BACKEND = 'rpc://'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication', # Для фронта/Postman
+        'rest_framework.authentication.SessionAuthentication',       # Для браузера (кнопка Log In)
+    ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated', # Закрываем всё API по умолчанию
+    ]
+}
+
+# Куда переходим после логина (на главную)
+LOGIN_REDIRECT_URL = '/'
+
+# Куда переходим после выхода (на страницу логина)
+LOGOUT_REDIRECT_URL = '/accounts/login/'

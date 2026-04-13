@@ -1,5 +1,7 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 
 from .forms import EstimateUploadForm
 from .models import Estimate
@@ -8,6 +10,7 @@ from .services import process_new_estimate
 from .tasks import process_estimate_task
 
 
+@login_required
 def index(request):
     if request.method == 'POST':
         # Если прислали данные — наполняем форму
@@ -36,9 +39,8 @@ def index(request):
 class EstimateListCreateAPIView(generics.ListCreateAPIView):
     queryset = Estimate.objects.all().order_by('-created_at')
     serializer_class = EstimateSerializer
+    permission_classes = [IsAuthenticated] 
 
     def perform_create(self, serializer):
-        # Эта магия срабатывает при POST-запросе
         estimate = serializer.save()
-        # Запускаем нашу фоновую задачу Celery!
         process_estimate_task.delay(estimate.id)
