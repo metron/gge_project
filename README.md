@@ -1,5 +1,5 @@
 # Демо проект
-Django + Celery + Валидация + DRF + Postgres + Docker
+Django + DRF + Celery + Postgres + Валидация + JWT + Docker
 
 # Запуск
 ## Запускаем докер контейнеры
