@@ -1,6 +1,7 @@
 import time
 from .models import Estimate
 
+
 def process_new_estimate(estimate: Estimate):
     # 1. Сразу ставим статус "В обработке"
     estimate.status = 'processing'

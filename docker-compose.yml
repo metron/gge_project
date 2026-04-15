@@ -29,7 +29,7 @@ services:
 
   worker:
     build: .
-    command: celery -A config worker --loglevel=info
+    command: watchfiles "celery -A config worker --loglevel=info"
     volumes:
       - .:/app
     depends_on:

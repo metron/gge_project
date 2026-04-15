@@ -9,7 +9,7 @@ def process_estimate_task(estimate_id):
     estimate.status = 'processing'
     estimate.save()
     
-    time.sleep(10) # Имитируем тяжелый парсинг GGE
+    time.sleep(10)  # Имитируем тяжелый парсинг GGE
     
     estimate.status = 'checked'
     estimate.save()

@@ -47,6 +47,9 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+
+    'estimates.middleware.AdminIPRestrictMiddleware',
+
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -152,3 +155,29 @@ LOGIN_REDIRECT_URL = '/'
 
 # Куда переходим после выхода (на страницу логина)
 LOGOUT_REDIRECT_URL = '/accounts/login/'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': '{levelname} {asctime} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'admin_security_file': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': 'admin_access_denied.log',  # Файл появится в корне проекта
+            'formatter': 'simple',
+        },
+    },
+    'loggers': {
+        'admin_security': {
+            'handlers': ['admin_security_file'],
+            'level': 'WARNING',
+            'propagate': True,
+        },
+    },
+}
