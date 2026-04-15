@@ -15,14 +15,6 @@
 </head>
 <body>
     <h1>Загрузить новую смету</h1>
-    
-    <!-- {% if form.file.errors %}
-        {% for error in form.file.errors %}
-            <div style="color: red; border: 1px solid red; padding: 5px; margin-bottom: 5px;">
-                {{ error }}
-            </div>
-        {% endfor %}
-    {% endif %} -->
 
     <!-- enctype важен для загрузки файлов! -->
     <form method="post" enctype="multipart/form-data">
@@ -46,18 +38,21 @@
             </tr>
         </thead>
         <tbody>
-            {% for est in estimates %}
-            <tr>
-                <td>{{ est.title }}</td>
-                <td>{{ est.created_at|date:"d.m.Y H:i" }}</td>
-                <td>{{ est.get_status_display }}</td> <!-- Магия: выводит "Новая" вместо "new" -->
-                <td><a href="{{ est.file.url }}">Скачать</a></td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4">Смет пока нет.</td>
-            </tr>
-            {% endfor %}
+            {% load cache %}
+            {% cache 300 estimate_list request.user.username %}
+                {% for est in estimates %}
+                <tr>
+                    <td>{{ est.title }}</td>
+                    <td>{{ est.created_at|date:"d.m.Y H:i" }}</td>
+                    <td>{{ est.get_status_display }}</td> <!-- Магия: выводит "Новая" вместо "new" -->
+                    <td><a href="{{ est.file.url }}">Скачать</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">Смет пока нет.</td>
+                </tr>
+                {% endfor %}
+            {% endcache %}
         </tbody>
     </table>
 </body>

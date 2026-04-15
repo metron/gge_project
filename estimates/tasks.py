@@ -2,6 +2,7 @@ import time
 from celery import shared_task
 from .models import Estimate
 
+
 @shared_task
 def process_estimate_task(estimate_id):
     # Эта функция выполнится в отдельном процессе воркера!

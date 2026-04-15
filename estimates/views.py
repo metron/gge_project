@@ -1,16 +1,25 @@
 from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from django.views.decorators.cache import cache_page
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
 from .forms import EstimateUploadForm
 from .models import Estimate
 from .serializers import EstimateSerializer
-from .services import process_new_estimate
 from .tasks import process_estimate_task
 
 
+def test_cache_view(request):
+    cache.set("my_key", "Привет, я из Redis!", 30)  # Хранить 30 секунд
+    val = cache.get("my_key")
+    print(val)  # Выведет в консоль
+    return HttpResponse(f"Значение из кэша: {val}")
+
 @login_required
+@cache_page(5)  # Кэшировать на 5 секунд
 def index(request):
     if request.method == 'POST':
         # Если прислали данные — наполняем форму

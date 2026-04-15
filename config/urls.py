@@ -23,12 +23,13 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView
 )
 
-from estimates.views import EstimateListCreateAPIView, index
+from estimates.views import EstimateListCreateAPIView, index, test_cache_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', index, name='index'),  # Главная страница
+    path('redis_cache/', test_cache_view, name='redis_cache'),
     path('api-auth/', include('rest_framework.urls')),
     path('api/estimates/', EstimateListCreateAPIView.as_view(), name='estimate-api'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
